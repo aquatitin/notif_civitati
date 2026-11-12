@@ -1,0 +1,23 @@
+name: Resum diari free tour Breslau
+
+on:
+  schedule:
+    - cron: "58 20 * * *"   # 20:58 UTC = 21:58 a Catalunya (horari d'hivern)
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  summary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Envia el resum
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          TARGET_DATE: "2026-11-26,2026-11-29"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 summary.py
