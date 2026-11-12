@@ -14,5 +14,5 @@ jobs:
       - name: Comprova el 29/11
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
-          TARGET_DATE: "2026-11-29"
+          TARGET_DATE: "2026-11-25"
         run: python3 check.py
