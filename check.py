@@ -6,7 +6,12 @@ import sys
 import urllib.request
 
 ACTIVITY_ID = "5054"
-TARGET_DATE = os.environ.get("TARGET_DATE", "2026-11-29")
+# Una o més dates separades per comes, p. ex. "2026-11-26,2026-11-29"
+TARGET_DATES = [
+    d.strip()
+    for d in os.environ.get("TARGET_DATE", "2026-11-26,2026-11-29").split(",")
+    if d.strip()
+]
 NTFY_TOPIC = os.environ["NTFY_TOPIC"]  # secret del repositori
 PAGE_URL = "https://www.civitatis.com/es/breslavia/visita-guiada-breslavia/"
 API_URL = (
@@ -63,17 +68,21 @@ def main():
     if not dates:
         # Si la resposta ve buida, probablement ens han bloquejat: falla perquè ho vegis.
         sys.exit("Resposta sense dates: possible bloqueig o canvi a l'API")
-    day = next((d for d in dates if d.get("date") == TARGET_DATE), None)
-    if day is None:
-        print(f"{TARGET_DATE}: sense disponibilitat")
-        return
-    hours = hours_for(cal, day)
-    detail = "; ".join(hours) if hours else "horari no indicat"
-    print(f"{TARGET_DATE}: DISPONIBLE -> {detail}")
-    notify(
-        "Free tour Breslau: hi ha places!",
-        f"Disponibilitat el {TARGET_DATE}: {detail}. Toca per reservar.",
-    )
+    found = []
+    for target in TARGET_DATES:
+        day = next((d for d in dates if d.get("date") == target), None)
+        if day is None:
+            print(f"{target}: sense disponibilitat")
+            continue
+        hours = hours_for(cal, day)
+        detail = "; ".join(hours) if hours else "horari no indicat"
+        print(f"{target}: DISPONIBLE -> {detail}")
+        found.append(f"{target}: {detail}")
+    if found:
+        notify(
+            "Free tour Breslau: hi ha places!",
+            "Disponibilitat\n" + "\n".join(found) + "\nToca per reservar.",
+        )
 
 
 if __name__ == "__main__":
