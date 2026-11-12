@@ -6,7 +6,7 @@ import sys
 import urllib.request
 
 ACTIVITY_ID = "5054"
-TARGET_DATE = os.environ.get("TARGET_DATE", "2026-11-25")
+TARGET_DATE = os.environ.get("TARGET_DATE", "2026-11-29")
 NTFY_TOPIC = os.environ["NTFY_TOPIC"]  # secret del repositori
 PAGE_URL = "https://www.civitatis.com/es/breslavia/visita-guiada-breslavia/"
 API_URL = (
